@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/ServiceRequestTracker.API/ServiceRequestTracker.API.csproj" />
+  <Project Path="src/ServiceRequestTracker.Common/ServiceRequestTracker.Common.csproj" />
+  <Project Path="src/ServiceRequestTracker.Persistence/ServiceRequestTracker.Persistence.csproj" />
+</Solution>

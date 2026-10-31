@@ -1,0 +1,6 @@
+@ServiceRequestTracker.API_HostAddress = http://localhost:5086
+
+GET {{ServiceRequestTracker.API_HostAddress}}/api/service-requests?Status=New&Page=1&PageSize=10
+Accept: application/json
+
+###
