@@ -6,6 +6,8 @@ namespace ServiceRequestTracker.Communication
     {
         public Guid Id { get; init; }
 
-        public Status Status { get; init; }
+        public Status PreviousStatus { get; init; }
+
+        public Status NewStatus { get; init; }
     }
 }

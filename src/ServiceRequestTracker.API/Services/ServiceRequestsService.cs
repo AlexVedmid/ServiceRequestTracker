@@ -6,6 +6,7 @@ using ServiceRequestTracker.API.Responses;
 using ServiceRequestTracker.Common.Enums;
 using ServiceRequestTracker.Common.Models;
 using ServiceRequestTracker.Communication;
+using ServiceRequestTracker.Persistence;
 
 namespace ServiceRequestTracker.API.Services;
 
@@ -13,14 +14,15 @@ public class ServiceRequestsService : IServiceRequestsService
 {
     private readonly IServiceRequestsRepository _serviceRequestsRepository;
     private readonly IPublishEndpoint _publishEndpoint;
-
+    private readonly ServiceRequestTrackerDbContext _dbContext;
     private readonly ServiceRequestsMapper _mapper = new();
 
     public ServiceRequestsService(IServiceRequestsRepository serviceRequestsRepository,
-        IPublishEndpoint publishEndpoint)
+        IPublishEndpoint publishEndpoint, ServiceRequestTrackerDbContext dbContext)
     {
         _serviceRequestsRepository = serviceRequestsRepository;
         _publishEndpoint = publishEndpoint;
+        _dbContext = dbContext;
     }
 
     public async Task<GetServiceRequestResponse?> GetServiceRequest(Guid id)
@@ -38,19 +40,26 @@ public class ServiceRequestsService : IServiceRequestsService
         );
     }
 
-    public Task CreateServiceRequest(CreateServiceRequest request)
+    public async Task CreateServiceRequest(CreateServiceRequest request)
     {
         var message = _mapper.ToMessage(request);
-        return _publishEndpoint.Publish(message);
+
+        await _publishEndpoint.Publish(message);
+        // save message to outbox table
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task UpdateServiceRequest(Guid id, Status status)
+    public async Task UpdateServiceRequest(Guid id, Status previousStatus, Status newStatus)
     {
         var message = new UpdateServiceRequestMessage
         {
             Id = id,
-            Status = status
+            PreviousStatus = previousStatus,
+            NewStatus = newStatus
         };
-        return _publishEndpoint.Publish(message);
+
+        await _publishEndpoint.Publish(message);
+        // save message to outbox table
+        await _dbContext.SaveChangesAsync();
     }
 }

@@ -14,5 +14,5 @@ public interface IServiceRequestsService
 
     Task CreateServiceRequest(CreateServiceRequest request);
 
-    Task UpdateServiceRequest(Guid id, Status status);
+    Task UpdateServiceRequest(Guid id, Status previousStatus, Status newStatus);
 }

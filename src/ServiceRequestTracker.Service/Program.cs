@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using ServiceRequestTracker.Persistence;
 using ServiceRequestTracker.Service.Consumers;
+using ServiceRequestTracker.Service.Repositories;
 
 namespace ServiceRequestTracker.Service
 {
@@ -32,11 +33,11 @@ namespace ServiceRequestTracker.Service
                 x.AddConsumer<UpdateServiceRequestConsumer>();
 
                 // Configure the Transactional Outbox & Inbox State
-                //x.AddEntityFrameworkOutbox<ServiceRequestTrackerDbContext>(o =>
-                //{
-                //    // Enables the Inbox pattern to detect duplicate messages
-                //    o.UsePostgres();
-                //});
+                x.AddEntityFrameworkOutbox<ServiceRequestTrackerDbContext>(o =>
+                {
+                    // Enables the Inbox pattern to detect duplicate messages
+                    o.UsePostgres();
+                });
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -46,7 +47,7 @@ namespace ServiceRequestTracker.Service
                 });
             });
 
-            builder.Services.AddHostedService<Worker>();
+            builder.Services.AddScoped<IServiceRequestsRepository, ServiceRequestsRepository>();
 
             var host = builder.Build();
             host.Run();

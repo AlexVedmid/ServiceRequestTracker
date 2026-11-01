@@ -101,12 +101,12 @@ namespace ServiceRequestTracker.API
             builder.Services.AddMassTransit(x =>
             {
                 // Configure the Transactional Outbox & Inbox State
-                //x.AddEntityFrameworkOutbox<ServiceRequestTrackerDbContext>(o =>
-                //{
-                //    // Enables the Inbox pattern to detect duplicate messages
-                //    o.UsePostgres();
-                //    o.UseBusOutbox();
-                //});
+                x.AddEntityFrameworkOutbox<ServiceRequestTrackerDbContext>(o =>
+                {
+                    // Enables the Inbox pattern to detect duplicate messages
+                    o.UsePostgres();
+                    o.UseBusOutbox();
+                });
 
                 // Configure RabbitMQ Transport
                 x.UsingRabbitMq((context, cfg) =>

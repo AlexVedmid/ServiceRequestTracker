@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using ServiceRequestTracker.API.Requests;
 using ServiceRequestTracker.API.Responses;
@@ -48,7 +49,7 @@ namespace ServiceRequestTracker.API.Controllers
         }
 
         [HttpPatch("{id:guid}/status")]
-        public async Task<ActionResult> Update(Guid id, Status status)
+        public async Task<ActionResult> Update([Required] Guid id, [Required] Status status)
         {
             var serviceRequest = await _serviceRequestsService.GetServiceRequest(id);
 
@@ -69,6 +70,8 @@ namespace ServiceRequestTracker.API.Controllers
             {
                 return Conflict($"Cannot update status of a {serviceRequest.Status} service request to {status}");
             }
+
+            await _serviceRequestsService.UpdateServiceRequest(id, serviceRequest.Status, status);
 
             return Ok(serviceRequest);
         }
