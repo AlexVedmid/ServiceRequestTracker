@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using ServiceRequestTracker.Persistence.BaseContext;
 using ServiceRequestTracker.Persistence.Entities;
 
@@ -19,7 +20,11 @@ namespace ServiceRequestTracker.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            // MassTransit tables
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
+            modelBuilder.AddOutboxStateEntity();
+            // Entities
             modelBuilder.Entity<ServiceRequestEntity>().HasKey(e => e.Id);
             modelBuilder.Entity<ServiceRequestEntity>().HasIndex(e => e.Id).IsUnique();
             modelBuilder.Entity<ServiceRequestEntity>().HasIndex(e => e.CreatedAt);

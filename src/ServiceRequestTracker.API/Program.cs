@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -93,8 +94,27 @@ namespace ServiceRequestTracker.API
 
             builder.Services.AddDbContext<ServiceRequestTrackerDbContext>(dbContextOptionsBuilder =>
             {
-                var connectionString = configuration.GetSection("ConnectionStrings:DefaultConnection").Get<string>();
+                var connectionString = configuration.GetSection("ConnectionStrings:DBConnection").Get<string>();
                 dbContextOptionsBuilder.UseNpgsql(connectionString);
+            });
+
+            builder.Services.AddMassTransit(x =>
+            {
+                // Configure the Transactional Outbox & Inbox State
+                //x.AddEntityFrameworkOutbox<ServiceRequestTrackerDbContext>(o =>
+                //{
+                //    // Enables the Inbox pattern to detect duplicate messages
+                //    o.UsePostgres();
+                //    o.UseBusOutbox();
+                //});
+
+                // Configure RabbitMQ Transport
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    var rabbitMqUri = configuration.GetSection("ConnectionStrings:RabbitMqUri").Get<string>();
+                    cfg.Host(new Uri(rabbitMqUri));
+                    cfg.ConfigureEndpoints(context);
+                });
             });
 
             builder.Services.AddScoped<IServiceRequestsRepository, ServiceRequestsRepository>();

@@ -1,5 +1,6 @@
 ﻿using ServiceRequestTracker.API.Requests;
 using ServiceRequestTracker.API.Responses;
+using ServiceRequestTracker.Common.Enums;
 using ServiceRequestTracker.Common.Models;
 
 namespace ServiceRequestTracker.API.Services;
@@ -12,4 +13,6 @@ public interface IServiceRequestsService
         GetServiceRequestsRequest requestsRequest, CancellationToken token);
 
     Task CreateServiceRequest(CreateServiceRequest request);
+
+    Task UpdateServiceRequest(Guid id, Status status);
 }

@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="src/ServiceRequestTracker.API/ServiceRequestTracker.API.csproj" />
   <Project Path="src/ServiceRequestTracker.Common/ServiceRequestTracker.Common.csproj" />
+  <Project Path="src/ServiceRequestTracker.Communication/ServiceRequestTracker.Communication.csproj" Id="9e68d0cb-a380-4ee8-a82b-194ea3db7a1d" />
   <Project Path="src/ServiceRequestTracker.Persistence/ServiceRequestTracker.Persistence.csproj" />
+  <Project Path="src/ServiceRequestTracker.Service/ServiceRequestTracker.Service.csproj" Id="eeee8c04-d1b8-411d-8464-23e692361c55" />
 </Solution>

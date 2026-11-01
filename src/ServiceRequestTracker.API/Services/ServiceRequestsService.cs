@@ -1,19 +1,26 @@
-﻿using ServiceRequestTracker.API.Mapping;
+﻿using MassTransit;
+using ServiceRequestTracker.API.Mapping;
 using ServiceRequestTracker.API.Repositories;
 using ServiceRequestTracker.API.Requests;
 using ServiceRequestTracker.API.Responses;
+using ServiceRequestTracker.Common.Enums;
 using ServiceRequestTracker.Common.Models;
+using ServiceRequestTracker.Communication;
 
 namespace ServiceRequestTracker.API.Services;
 
 public class ServiceRequestsService : IServiceRequestsService
 {
     private readonly IServiceRequestsRepository _serviceRequestsRepository;
+    private readonly IPublishEndpoint _publishEndpoint;
+
     private readonly ServiceRequestsMapper _mapper = new();
 
-    public ServiceRequestsService(IServiceRequestsRepository serviceRequestsRepository)
+    public ServiceRequestsService(IServiceRequestsRepository serviceRequestsRepository,
+        IPublishEndpoint publishEndpoint)
     {
         _serviceRequestsRepository = serviceRequestsRepository;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<GetServiceRequestResponse?> GetServiceRequest(Guid id)
@@ -33,6 +40,17 @@ public class ServiceRequestsService : IServiceRequestsService
 
     public Task CreateServiceRequest(CreateServiceRequest request)
     {
-        throw new NotImplementedException();
+        var message = _mapper.ToMessage(request);
+        return _publishEndpoint.Publish(message);
+    }
+
+    public Task UpdateServiceRequest(Guid id, Status status)
+    {
+        var message = new UpdateServiceRequestMessage
+        {
+            Id = id,
+            Status = status
+        };
+        return _publishEndpoint.Publish(message);
     }
 }

@@ -11,7 +11,7 @@ public record CreateServiceRequest
     [MaxLength(2000)]
     public string Description { get; set; }
 
-    public Priority Priority { get; set; }
+    public Priority Priority { get; set; } = Priority.Normal;
 
-    public Status Status { get; set; }
+    public static Status Status => Status.New;
 };
