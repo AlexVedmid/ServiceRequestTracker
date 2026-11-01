@@ -6,6 +6,7 @@ using ServiceRequestTracker.API.Repositories;
 using ServiceRequestTracker.API.Services;
 using ServiceRequestTracker.Persistence;
 using System.Text.Json.Serialization;
+using Serilog;
 
 namespace ServiceRequestTracker.API
 {
@@ -22,6 +23,10 @@ namespace ServiceRequestTracker.API
                     reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
+
+            // Add logging with Serilog
+            builder.Host.UseSerilog((context, loggerConfiguration) =>
+                loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
             // Add services to the container.
             await ConfigureServices(builder, configuration);
@@ -52,6 +57,8 @@ namespace ServiceRequestTracker.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseSerilogRequestLogging();
 
             app.MapControllers();
 

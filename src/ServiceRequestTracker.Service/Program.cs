@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ServiceRequestTracker.Persistence;
 using ServiceRequestTracker.Service.Consumers;
 using ServiceRequestTracker.Service.Repositories;
@@ -19,6 +20,10 @@ namespace ServiceRequestTracker.Service
                     reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
+
+            // Add logging with Serilog
+            builder.Services.AddSerilog(loggerConfiguration =>
+                loggerConfiguration.ReadFrom.Configuration(builder.Configuration));
 
             builder.Services.AddDbContext<ServiceRequestTrackerDbContext>(dbContextOptionsBuilder =>
             {
