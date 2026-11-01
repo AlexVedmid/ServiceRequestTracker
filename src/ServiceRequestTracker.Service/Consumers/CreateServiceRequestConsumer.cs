@@ -1,5 +1,4 @@
 ﻿using MassTransit;
-using Microsoft.Extensions.Logging.Abstractions;
 using ServiceRequestTracker.Common.Enums;
 using ServiceRequestTracker.Communication;
 using ServiceRequestTracker.Service.Mapping;

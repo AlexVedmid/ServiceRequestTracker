@@ -12,4 +12,7 @@
   <Folder Name="/Services/">
     <Project Path="src/ServiceRequestTracker.Service/ServiceRequestTracker.Service.csproj" Id="eeee8c04-d1b8-411d-8464-23e692361c55" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ServiceRequestTracker.API.IntegrationTests/ServiceRequestTracker.API.IntegrationTests.csproj" Id="bac92c7f-e16a-4ed9-a0fc-f55b1c99408a" />
+  </Folder>
 </Solution>
