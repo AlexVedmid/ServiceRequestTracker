@@ -30,11 +30,9 @@ services:
       DOTNET_ENVIRONMENT: Development
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DBConnection: Server=postgres-db;Port=5432;Database=ServiceRequestTrackerDB;User Id=myuser;Password=mypassword
-      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672
+      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672/
 
     ports:
-    - "5086:5086"
-    - "7245:7245"
     - "8080:8080"
     - "8081:8081"
     depends_on:
@@ -49,7 +47,7 @@ services:
     environment:
       DOTNET_ENVIRONMENT: Development
       ConnectionStrings__DBConnection: Server=postgres-db;Port=5432;Database=ServiceRequestTrackerDB;User Id=myuser;Password=mypassword
-      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672
+      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672/
     depends_on:
       - postgres-db
       - rabbitmq-message-broker

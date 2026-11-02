@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ServiceRequestTracker.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class MassTransitTables : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,12 +44,28 @@ namespace ServiceRequestTracker.Persistence.Migrations
                     RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Delivered = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true),
-                    BusName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
+                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OutboxState", x => x.OutboxId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServiceRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "text", maxLength: 2000, nullable: false),
+                    Priority = table.Column<byte>(type: "smallint", nullable: false),
+                    Status = table.Column<byte>(type: "smallint", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceRequests", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,6 +116,16 @@ namespace ServiceRequestTracker.Persistence.Migrations
                 column: "Delivered");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_EnqueueTime",
+                table: "OutboxMessage",
+                column: "EnqueueTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_ExpirationTime",
+                table: "OutboxMessage",
+                column: "ExpirationTime");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_InboxMessageId_InboxConsumerId_SequenceNumber",
                 table: "OutboxMessage",
                 columns: new[] { "InboxMessageId", "InboxConsumerId", "SequenceNumber" },
@@ -112,9 +138,25 @@ namespace ServiceRequestTracker.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OutboxState_BusName_Created",
+                name: "IX_OutboxState_Created",
                 table: "OutboxState",
-                columns: new[] { "BusName", "Created" });
+                column: "Created");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceRequests_CreatedAt",
+                table: "ServiceRequests",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceRequests_Id",
+                table: "ServiceRequests",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceRequests_Status",
+                table: "ServiceRequests",
+                column: "Status");
         }
 
         /// <inheritdoc />
@@ -122,6 +164,9 @@ namespace ServiceRequestTracker.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "OutboxMessage");
+
+            migrationBuilder.DropTable(
+                name: "ServiceRequests");
 
             migrationBuilder.DropTable(
                 name: "InboxState");
