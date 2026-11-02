@@ -1,0 +1,55 @@
+name: ServiceRequestTracker
+services:
+
+  postgres-db:
+    image: postgres:latest
+    container_name: srt-postgres-container
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ServiceRequestTrackerDB
+    ports:
+      - "5432:5432"
+
+  rabbitmq-message-broker:
+    image: rabbitmq:management
+    container_name: srt-rabbitmq-container
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  tracker-web-api:
+    container_name: srt-web-api
+    build:
+      context: .
+      dockerfile: .\src\ServiceRequestTracker.API\Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DBConnection: Server=postgres-db;Port=5432;Database=ServiceRequestTrackerDB;User Id=myuser;Password=mypassword
+      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672
+
+    ports:
+    - "5086:5086"
+    - "7245:7245"
+    - "8080:8080"
+    - "8081:8081"
+    depends_on:
+      - postgres-db
+      - rabbitmq-message-broker
+
+  tracker-service:
+    container_name: srt-service
+    build:
+      context: .
+      dockerfile: .\src\ServiceRequestTracker.Service\Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__DBConnection: Server=postgres-db;Port=5432;Database=ServiceRequestTrackerDB;User Id=myuser;Password=mypassword
+      ConnectionStrings__RabbitMqUri: amqp://guest:guest@rabbitmq-message-broker:5672
+    depends_on:
+      - postgres-db
+      - rabbitmq-message-broker

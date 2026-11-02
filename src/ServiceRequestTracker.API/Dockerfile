@@ -7,15 +7,14 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ServiceRequestTracker.API/ServiceRequestTracker.API.csproj", "ServiceRequestTracker.API/"]
-RUN dotnet restore "./ServiceRequestTracker.API/ServiceRequestTracker.API.csproj"
+COPY ["src/ServiceRequestTracker.API/ServiceRequestTracker.API.csproj", "src/ServiceRequestTracker.API/"]
+RUN dotnet restore "./src/ServiceRequestTracker.API/ServiceRequestTracker.API.csproj"
 COPY . .
-WORKDIR "/src/ServiceRequestTracker.API"
+WORKDIR "/src/src/ServiceRequestTracker.API"
 RUN dotnet build "./ServiceRequestTracker.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
