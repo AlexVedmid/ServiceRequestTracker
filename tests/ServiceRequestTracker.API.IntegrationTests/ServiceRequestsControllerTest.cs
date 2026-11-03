@@ -36,18 +36,43 @@ namespace ServiceRequestTracker.API.IntegrationTests
             actualServiceRequestResponse.Should().BeEquivalentTo(expectedServiceRequest);
         }
 
-        [Fact]
-        public async Task Update_Done_ServiceRequests_Returns_Conflict()
+        [Theory]
+        [InlineData(Status.Cancelled, Status.InProgress)]
+        [InlineData(Status.Cancelled, Status.Done)]
+        [InlineData(Status.Done, Status.New)]
+        [InlineData(Status.New, Status.Done)]
+        [InlineData(Status.InProgress, Status.New)]
+        [InlineData(Status.Done, Status.Cancelled)]
+        public async Task Update_ServiceRequests_Returns_Conflict(Status currentStatus, Status newStatus)
         {
             // Arrange
             var serviceRequestId = Guid.NewGuid();
             var expectedServiceRequest = _fixture.Build<GetServiceRequestResponse>()
-                .With(sr => sr.Id, serviceRequestId).With(sr => sr.Status, Status.Done) .Create();
+                .With(sr => sr.Id, serviceRequestId).With(sr => sr.Status, currentStatus).Create();
             _serviceMock.Setup(sm => sm.GetServiceRequest(serviceRequestId)).ReturnsAsync(expectedServiceRequest);
             // Act
-            var response = await _controller.Update(serviceRequestId, Status.New);
+            var response = await _controller.Update(serviceRequestId, newStatus);
             // Verify
             Assert.IsType<ConflictObjectResult>(response);
+        }
+
+        [Theory]
+        [InlineData(Status.New, Status.InProgress)]
+        [InlineData(Status.New, Status.Cancelled)]
+        [InlineData(Status.InProgress, Status.Done)]
+        [InlineData(Status.InProgress, Status.Cancelled)]
+        [InlineData(Status.Cancelled, Status.New)]
+        public async Task Update_ServiceRequests_Returns_Ok(Status currentStatus, Status newStatus)
+        {
+            // Arrange
+            var serviceRequestId = Guid.NewGuid();
+            var expectedServiceRequest = _fixture.Build<GetServiceRequestResponse>()
+                .With(sr => sr.Id, serviceRequestId).With(sr => sr.Status, currentStatus).Create();
+            _serviceMock.Setup(sm => sm.GetServiceRequest(serviceRequestId)).ReturnsAsync(expectedServiceRequest);
+            // Act
+            var response = await _controller.Update(serviceRequestId, newStatus);
+            // Verify
+            Assert.IsType<OkObjectResult>(response);
         }
     }
 }

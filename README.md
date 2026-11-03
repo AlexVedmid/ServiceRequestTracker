@@ -62,10 +62,10 @@ Features have to be done if there is more time:
 
 ## Unclear or controversial items
 
-1. In fact route `POST /api/service-requests` has to return HTTP 200
+1. In fact route `POST /api/service-requests` has to return HTTP `200 OK` instead of HTTP `201 Created`
 2. What is the `ProblemDetails` format?
 3. Create and update service request models have to be separated
-4. Solution requires a distributed monolith architecture with at least 2 separate applications: API to read data and Service to handle changes
+4. Solution requires a **distributed monolith** architecture with at least 2 separate applications: **API** to read data and **Service** to handle changes
 5. In fact applications should not run the DB migrations on their startup or any other way. Migrations should be run either manually or automatically from CI/CD process.
-6. Inbox/outbox approach with RDB will slow solution down on scale or high traffic
+6. **Inbox/outbox** approach with RDB will slow solution down on scale or high traffic
 7. <span style="color: red;font-weight: bold;">Do not forget to specify that engineer must not use MassTransit packages of version 9 or higher! Only version 8! Otherwise, they will have to start their work from scratch!</span>
