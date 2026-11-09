@@ -1,6 +1,7 @@
 # ServiceRequestTracker
 
 - [ServiceRequestTracker](#servicerequesttracker)
+  - [Task](#task)
   - [How to run the solution](#how-to-run-the-solution)
     - [Docker](#docker)
     - [Locally from IDE](#locally-from-ide)
@@ -9,6 +10,14 @@
     - [Development testing](#development-testing)
   - [To be done later](#to-be-done-later)
   - [Unclear or controversial items](#unclear-or-controversial-items)
+
+## Task
+
+<object data="Service-Request-Tracker-Task-UK.pdf" type="application/pdf" width="100%">
+    <embed src="Service-Request-Tracker-Task-UK.pdf">
+        <p>Your browser does not support inline PDFs. <a href="Service-Request-Tracker-Task-UK.pdf">Download PDF</a> instead.</p>
+    </embed>
+</object>
 
 ## How to run the solution
 
@@ -53,17 +62,18 @@ Features have to be done if there is more time:
 1. Introduce **Retry**, **Timeout**, **Circuit Breaker** policies
 2. **Authentication** and **Authorization**
 3. Logging to external data storage, like ELK stack
-4. More integration tests
-5. End-to-end tests
-6. Performance/Load tests
-7. Front-end application
-8. Notifications from API to FE with ASP.NET SignalR (with web sockets or SSE)
-9. Prepare Kubernetes cluster and deploy solution there
+4. Adding of `CorrelationId` and its passing via message broker
+5. More integration tests
+6. End-to-end tests
+7. Performance/Load tests
+8. Front-end application
+9. Notifications from API to FE with ASP.NET SignalR (with web sockets or SSE)
+10. Prepare Kubernetes cluster and deploy solution there
 
 ## Unclear or controversial items
 
-1. In fact route `POST /api/service-requests` has to return HTTP `200 OK` instead of HTTP `201 Created`
-2. What is the `ProblemDetails` format?
+1. In fact route `POST /api/service-requests` has to return HTTP `202 Accepted` or `200 OK` instead of HTTP `201 Created` as API process does not create record and is not aware of creation result
+2. `ProblemDetails` format is far from the best approach. It leads to excessive and ugly code, it does not have strict contract/model/constructor/constraints, does not propose universal or at least common approach and at the end of the day just returns `ObjectResult` as well as `Ok`, `NotFound` or `Conflict`.
 3. Create and update service request models have to be separated
 4. Solution requires a **distributed monolith** architecture with at least 2 separate applications: **API** to read data and **Service** to handle changes
 5. In fact applications should not run the DB migrations on their startup or any other way. Migrations should be run either manually or automatically from CI/CD process.
